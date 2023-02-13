@@ -2,7 +2,7 @@
 
 Get started quickly with Serenity BDD and JUnit 5 with this simple starter project. 
 
-##JDK compatibility project
+## Version project JDK
 
 Java 11 
 
@@ -20,7 +20,7 @@ Or simply [download a zip](https://github.com/serenity-bdd/serenity-junit-screen
 
 Open a command window and run:
 
-    gradlew test 
+    gradlew clean test 
 
 ## Viewing the reports
 
