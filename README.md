@@ -2,6 +2,10 @@
 
 Get started quickly with Serenity BDD and JUnit 5 with this simple starter project. 
 
+#JDK compatibility project
+
+Java 11 
+
 ## Get the code
 
 Git:
@@ -11,12 +15,6 @@ Git:
 
 
 Or simply [download a zip](https://github.com/serenity-bdd/serenity-junit-screenplay-starter/archive/master.zip) file.
-
-## Use Maven
-
-Open a command window and run:
-
-    mvn clean verify
 
 ## Use Gradle
 
