@@ -2,7 +2,7 @@
 
 Get started quickly with Serenity BDD and JUnit 5 with this simple starter project. 
 
-#JDK compatibility project
+##JDK compatibility project
 
 Java 11 
 
