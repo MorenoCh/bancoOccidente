@@ -1,5 +1,6 @@
 package tn5250;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import tn5250j.Session5250;
 import tn5250j.TN5250jConstants;
@@ -10,8 +11,15 @@ import tn5250j.framework.common.SessionManager;
 import tn5250j.framework.tn5250.Screen5250;
 import tn5250j.framework.tn5250.ScreenField;
 import tn5250j.framework.tn5250.ScreenOIA;
-
 import java.util.Properties;
+
+import java.security.MessageDigest;
+import java.util.Arrays;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import org.apache.commons.codec.binary.Base64;
+
 
 public class TerminalDriver {
 
@@ -43,13 +51,18 @@ public class TerminalDriver {
     }
 
     private void createSession() {
-        session = SessionManager.instance().openSession(properties, null, null);
+        session = SessionManager.instance().openSession(properties, null, "Name 1");
         session.addSessionListener(new SessionListener() {
             //@Override
             public void onSessionChanged(SessionChangeEvent changeEvent) {
                 connected = changeEvent.getState() == TN5250jConstants.STATE_CONNECTED;
             }
         });
+    }
+
+    public TerminalDriver disconectedSession(){
+        session.disconnect();
+        return this;
     }
 
     private void addOperatorInformationAreaListener() {
@@ -136,8 +149,12 @@ public class TerminalDriver {
         return getScreenContent().LeerTexto(x,y,longitud);
     }
 
-    public void assertScreen(String name) {
-        assert getScreenContent().getLine(0).contains(name) : String.format("Screen is not '%s'", name);
+    public boolean assertScreen(String name) {
+        boolean estado = false;
+        if(getScreenContent().getLine(0).contains(name)){
+            estado = true;
+        }
+        return estado;
     }
 
     public ScreenContent getScreenContent() {
@@ -170,6 +187,61 @@ public class TerminalDriver {
         BufferedImage image = new Robot().createScreenCapture(graphic.);
         ImageIO.write(image, "png",archivo);
 
+    }*/
+
+    public static String Encriptar(String texto) {
+
+        String secretKey = "qualityinfosolutions"; //llave para encriptar datos
+        String base64EncryptedString = "";
+
+        try {
+
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digestOfPassword = md.digest(secretKey.getBytes("utf-8"));
+            byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
+
+            SecretKey key = new SecretKeySpec(keyBytes, "DESede");
+            Cipher cipher = Cipher.getInstance("DESede");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+
+            byte[] plainTextBytes = texto.getBytes("utf-8");
+            byte[] buf = cipher.doFinal(plainTextBytes);
+            byte[] base64Bytes = Base64.encodeBase64(buf);
+            base64EncryptedString = new String(base64Bytes);
+
+        } catch (Exception ex) {
+        }
+        return base64EncryptedString;
+    }
+
+    /*public String encriptar(String texto) {
+        try {
+            byte[] keyBytes = texto.getBytes("UTF-8");
+            byte[] keyBytes16 = new byte[16];
+            System.arraycopy(keyBytes, 0, keyBytes16, 0, Math.min(keyBytes.length, 16));
+            SecretKeySpec secretKey = new SecretKeySpec(keyBytes16, "AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            return Base64.getEncoder().encodeToString(cipher.doFinal(texto.getBytes("UTF-8")));
+        } catch (Exception e) {
+            System.err.println("Error al encriptar: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public String desencriptar(String textoEncriptado) {
+        try {
+            byte[] keyBytes = textoEncriptado.getBytes("UTF-8");
+            byte[] keyBytes16 = new byte[16];
+            System.arraycopy(keyBytes, 0, keyBytes16, 0, Math.min(keyBytes.length, 16));
+            SecretKeySpec secretKey = new SecretKeySpec(keyBytes16, "AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            return new String(cipher.doFinal(Base64.getDecoder().decode(textoEncriptado)));
+        } catch (Exception e) {
+            System.err.println("Error al desencriptar: " + e.getMessage());
+        }
+        return null;
     }*/
 
     public boolean SearchField(String input) {

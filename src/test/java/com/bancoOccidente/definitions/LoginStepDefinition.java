@@ -3,8 +3,13 @@ package com.bancoOccidente.definitions;
 import com.bancoOccidente.steps.LoginStep;
 import com.bancoOccidente.util.Constants;
 import com.bancoOccidente.util.UtilAS400;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import io.cucumber.java.es.Cuando;
 import io.cucumber.java.es.Dado;
 import io.cucumber.java.es.Entonces;
@@ -25,22 +30,28 @@ public class LoginStepDefinition {
         UtilAS400.saveVariableOnSession(Constants.SCENARIO, this.scenario);
     }
 
-    @Dado("que inicio la sesion de el AS400")
-    public void que_inicio_la_sesion_de_el_as400() throws Exception {
+    @Given("^que inicio la sesion de el AS400 (.*)$")
+    public void que_inicio_la_sesion_de_el_as400(int intRow, DataTable tbDatosExcel) throws Exception {
+        loginStep.readDataDriven(intRow, tbDatosExcel);
         loginStep.iniciar_sesion();
     }
 
-    @Cuando("estoy en la pantalla de login {string}")
+    @When("^estoy en la pantalla de login (.*)$")
     public void estoy_en_la_pantalla_de_login(String pantalla) {
         loginStep.ValidacionPantallaInicio(pantalla);
     }
 
-    @Y("ingreso usuario {string} y clave {string}")
-    public void ingreso_usuario_y_clave(String usuario, String clave) {
-        loginStep.ingresar_credenciales(usuario, clave);
+    @And("^ingreso usuario y clave$")
+    public void ingreso_usuario_y_clave() {
+        loginStep.ingresar_credenciales();
     }
 
-    @Entonces("valido que estoy en la pantalla {string}")
+    @And("^cerrar sesion$")
+    public void cerrarSesion(){
+        loginStep.cerrarSesion();
+    }
+
+    @Then("valido que estoy en la pantalla {string}")
     public void valido_que_estoy_en_la_pantalla(String pantalla) {
         loginStep.ValidacionPantallaInicio(pantalla);
     }

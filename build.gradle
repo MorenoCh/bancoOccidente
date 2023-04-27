@@ -12,7 +12,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "net.serenity-bdd:serenity-gradle-plugin:3.3.0"
+        classpath "net.serenity-bdd:serenity-gradle-plugin:2.4.48"
     }
 }
 
@@ -31,8 +31,9 @@ sourceCompatibility = 1.11
 
 ext {
     slf4jVersion = '1.7.7'
-    serenityCoreVersion = '3.3.0'
-    junitVersion = '5.8.2'
+    serenityCoreVersion = '2.4.48'
+    serenityCucumberVersion = '2.4.48'
+    junitVersion = '5.8.1'
     assertJVersion = '3.22.0'
     logbackVersion = '1.2.10'
     log4jVersion = '1.2.16'
@@ -40,42 +41,73 @@ ext {
     jythonVersion = '2.7.2'
     javaxMailVersion = '1.4.5'
     lowagieVersion = '1.2.3'
+    poiooxml = '3.9'
+    lang3 = "3.0"
+    commonsCodec = "1.9"
+    cucumberVersion = '4.2.0'
 }
 
 dependencies {
-    testImplementation "net.serenity-bdd:serenity-core:${serenityCoreVersion}",
-            "net.serenity-bdd:serenity-junit5:${serenityCoreVersion}",
+    testImplementation "net.serenity-bdd:serenity-rest-assured:${serenityCoreVersion}",
+            "net.serenity-bdd:serenity-core:${serenityCoreVersion}",
+            "net.serenity-bdd:serenity-cucumber6:${serenityCucumberVersion}",
             "net.serenity-bdd:serenity-screenplay:${serenityCoreVersion}",
             "net.serenity-bdd:serenity-ensure:${serenityCoreVersion}",
-            "net.serenity-bdd:serenity-cucumber:${serenityCoreVersion}",
-            "org.junit.jupiter:junit-jupiter-api:${junitVersion}",
+            "org.junit.platform:junit-platform-launcher:1.8.1",
+            "org.junit.jupiter:junit-jupiter-engine:${junitVersion}",
+            "org.junit.vintage:junit-vintage-engine:${junitVersion}",
             "org.assertj:assertj-core:${assertJVersion}",
-            "ch.qos.logback:logback-classic:${logbackVersion}"
+            "io.cucumber:cucumber-java:${cucumberVersion}"
+
 
     implementation "log4j:log4j:${log4jVersion}",
+            "ch.qos.logback:logback-classic:${logbackVersion}",
             "net.sf.jt400:jt400:${jt400Version}",
             "org.python:jython:${jythonVersion}",
             "javax.mail:mail:${javaxMailVersion}",
+            "org.apache.poi:poi-ooxml:${poiooxml}",
+            "commons-codec:commons-codec:${commonsCodec}",
             "com.lowagie:itext:${lowagieVersion}"
-
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }
 
-test {
-    useJUnitPlatform()
-    testLogging.showStandardStreams = true
-    testLogging.exceptionFormat = 'full'
-    maxParallelForks = Runtime.runtime.availableProcessors() - 1
-    systemProperties System.getProperties()
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
 }
 
-serenity {
-    // Specify the root package of any JUnit acceptance tests to appear in the Serenity report
-    testRoot = "com.bancoOccidente"
-    // Specify the root directory of any Cucumber feature files
-    requirementsDir = "src/test/resources/features"
+def tags = (findProperty('tags') == null) ? 'not @Ignore' : findProperty('tags') + ' and not @Ignore'
 
-}
+/*task cucumber() {
+    dependsOn assemble, compileTestJava
+    doLast {
+        javaexec {
+            main = "net.serenitybdd.cucumber.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = [
+                    '--plugin', 'pretty',
+                    '--glue', 'com.bancoOccidente',
+                    '--tags', "${tags}",
+                    'src/test/resources/features/',
+            ]
+        }
+    }
+    finalizedBy(aggregate)
+}*/
+
+/*test {
+    javaexec {
+        main = "net.serenitybdd.cucumber.cli.Main"
+        classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+        args = [
+                '--plugin', 'pretty',
+                '--glue', 'com.bancoOccidente',
+                '--tags', "${tags}",
+                'src/test/resources/features/',
+        ]
+    }
+    finalizedBy(aggregate)
+}*/
 
 gradle.startParameter.continueOnFailure = true
 
