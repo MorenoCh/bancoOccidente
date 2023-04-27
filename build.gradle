@@ -76,7 +76,7 @@ configurations {
     }
 }
 
-def tags = (findProperty('tags') == null) ? 'not @Ignore' : findProperty('tags') + ' and not @Ignore'
+//def tags = (findProperty('tags') == null) ? 'not @Ignore' : findProperty('tags') + ' and not @Ignore'
 
 /*task cucumber() {
     dependsOn assemble, compileTestJava
