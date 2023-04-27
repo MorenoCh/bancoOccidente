@@ -5,6 +5,7 @@ import io.cucumber.junit.CucumberOptions;
 import net.serenitybdd.cucumber.CucumberWithSerenity;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
@@ -22,14 +23,14 @@ public class Runner {
     @RunWith(CucumberWithSerenity.class)
     @CucumberOptions(features="src/test/resources/features/",
             glue = "com.bancoOccidente",
-            tags = "@requestTravel",
+            tags = "@requestTravel or @r1",
             snippets = CucumberOptions.SnippetType.CAMELCASE
     )
     public class TestRunner {
 
     }
-    @Before
-    public void antes() throws IOException, InvalidFormatException {
+    @BeforeAll
+    public static void antes() throws IOException, InvalidFormatException {
         FeatureOverright.overrideFeatureFiles("src/test/resources/features");
     }
 }
